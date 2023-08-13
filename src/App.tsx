@@ -1,27 +1,13 @@
-// million-ignore
-import { useState } from "react"
-const App = () => {
-  const [js, setJs] = useState("")
+import CodeEditor from "./components/CodeEditor";
+import CodeRunner from "./components/CodeRunner";
 
-  const htmlTemplate = `
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-      </head>
-      <body>
-        <script>
-          ${js}
-        </script>
-      </body>
-    </html>
-  ` 
-
+const App: React.FC = () => {
   return (
-    <div>
-      <input type="text" value={js} onChange={(evt) => setJs(evt.target.value)} /> 
-      <iframe srcDoc={htmlTemplate} />
+    <div className="App">
+      <CodeEditor />
+      <CodeRunner />
     </div>
-  )
-}
+  );
+};
 
-export default App  
+export default App;
