@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useStore } from '../../store';
 import { styled } from 'goober';
 import { Context, Script } from '../../libs/vm-browser';
+import { debounce } from '../../utils/debounce';
 
 const CodeRunner: React.FC = () => {
   const { code, output, isLoading, error, setIsLoading, setError, setOutput } =
@@ -9,9 +10,19 @@ const CodeRunner: React.FC = () => {
 
   const codeLines = code.split('\n');
   const outputLines = output.map((line) => (line === 'undefined' ? '' : line));
+
+  let debouncedExecuteCode: any;
+
   useEffect(() => {
-    executeCode();
+    debouncedExecuteCode = debounce(executeCode, 500);
+    return () => clearTimeout(debouncedExecuteCode);
   }, [code]);
+
+  console.log({ output });
+
+  useEffect(() => {
+    debouncedExecuteCode();
+  }, [debouncedExecuteCode]);
 
   const executeCode = async () => {
     setIsLoading(true);
@@ -51,7 +62,6 @@ const CodeRunner: React.FC = () => {
             const run = myScript.runInContext(context);
             const result = String(run);
 
-            console.log(result, code);
             outputs.push(result);
 
             tempScript = '';
@@ -71,8 +81,9 @@ const CodeRunner: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   return (
-    <WrapperCodeRunner>
+    <WrapperCodeRunner className="runner">
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (

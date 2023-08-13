@@ -9,7 +9,7 @@ const CodeEditor: FC = () => {
   const handleCodeChange = (newCode: string) => setCode(newCode);
 
   return (
-    <EditorWrapper>
+    <EditorWrapper className="editor">
       <Editor
         language="javascript"
         options={{
@@ -26,7 +26,6 @@ const CodeEditor: FC = () => {
 };
 
 const EditorWrapper = styled('section')`
-  grid-column: 1;
   padding-top: 1rem;
   padding-bottom: 1rem;
 `;
