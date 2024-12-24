@@ -13,6 +13,7 @@ const CodeEditor: FC = () => {
       <Editor
         language="javascript"
         options={{
+          minimap: { enabled: false },
           lineNumbers: 'on',
           fontSize: 18,
           padding: { top: 16, bottom: 16 },

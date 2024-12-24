@@ -1,131 +1,115 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useStore } from '../../store';
 import { styled } from 'goober';
 import { Context, Script } from '../../libs/vm-browser';
-import { debounce } from '../../utils/debounce';
+import OutputLines from './OutputLines';
+import { OutputType } from '../../types/code';
+
+const createConsoleProxy = () => {
+  const logs: OutputType[] = [];
+  const proxy = {
+    log: (...args: any[]) => {
+      logs.push({
+        type: 'log',
+        data: args,
+      });
+    },
+    error: (...args: any[]) => {
+      logs.push({
+        type: 'error',
+        data: args,
+      });
+    },
+    warn: (...args: any[]) => {
+      logs.push({
+        type: 'warning',
+        data: args,
+      });
+    },
+  };
+  return { logs, proxy };
+};
 
 const CodeRunner: React.FC = () => {
-  const { code, output, isLoading, error, setIsLoading, setError, setOutput } =
-    useStore();
+  const { code, output, isLoading, error, setOutput } = useStore();
 
-  const codeLines = code.split('\n');
-  const outputLines = output.map((line) => (line === 'undefined' ? '' : line));
+  const executeCode = useMemo(() => {
+    return () => {
 
-  let debouncedExecuteCode: any;
+      const { logs, proxy } = createConsoleProxy();
+      try {
 
-  useEffect(() => {
-    debouncedExecuteCode = debounce(executeCode, 500);
-    return () => clearTimeout(debouncedExecuteCode);
-  }, [code]);
+        const executionContext = new Context();
+        executionContext.addProperty("console", proxy);
 
-  console.log({ output });
+        const utilFunctions = `
+        function log(...x) {
+          console.log(...x);
+          return [...x];
+        };
+      `
 
-  useEffect(() => {
-    debouncedExecuteCode();
-  }, [debouncedExecuteCode]);
+        const executionScript = new Script(`
+          ${utilFunctions}
+        ;(() => {${code}})();
+        `);
 
-  const executeCode = async () => {
-    setIsLoading(true);
-    try {
-      let cumulativeScript = '';
-      let tempScript = '';
-      let currentLine = 0;
-      const outputs = [];
+        executionScript.runInContext(executionContext);
 
-      const originalConsoleLog = console.log;
-
-      const consoleLog = (...args: any[]) => {
-        originalConsoleLog(...args);
-        const logMessage = args
-          .map((arg) => {
-            if (typeof arg === 'object') {
-              return JSON.stringify(arg, null, 2); // Convert objects to pretty JSON format
-            }
-            return arg;
-          })
-          .join(' ');
-
-        outputs.push(logMessage);
-      };
-
-      for (let i = 0; i < codeLines.length; i++) {
-        const line = codeLines[i];
-        cumulativeScript += line;
-
-        try {
-          tempScript += line;
-          const context = new Context();
-          context.addProperty('log', consoleLog);
-          const myScript = new Script(cumulativeScript);
-
-          if (line.trim().endsWith(';')) {
-            const run = myScript.runInContext(context);
-            const result = String(run);
-
-            outputs.push(result);
-
-            tempScript = '';
-            currentLine = i + 1;
-          } else {
-            tempScript += '\n';
-          }
-        } catch (innerError: any) {
-          outputs.push(innerError.message);
-        }
+      } catch (err) {
+        console.error(err)
+        logs.push({
+          type: 'error',
+          data: [err],
+        });
       }
 
-      setOutput(outputs);
-    } catch (error: any) {
-      setError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setOutput(logs);
+    };
+  }, [code]);
+
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      executeCode();
+    }, 300);
+
+    return () => {
+      clearTimeout(timeoutId);
+      setOutput([]);
+    };
+  }, [code]);
 
   return (
-    <WrapperCodeRunner className="runner">
+    <WrapperCodeRunner className='runner'>
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (
         <div>Error: {error.message}</div>
       ) : (
-        <div>
-          {codeLines.map((_, index) => (
-            <CodeLine key={index}>
-              <LineNumber>{index + 1}</LineNumber>
-              <OutputText>{outputLines[index] ?? ''}</OutputText>
-            </CodeLine>
-          ))}
-        </div>
+        output.map((log, index) => (
+          <OutputLines key={index} log={log} />
+        ))
       )}
     </WrapperCodeRunner>
   );
 };
 
+
+
 const WrapperCodeRunner = styled('section')`
-  width: 100vh;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  white-space: pre-wrap;
-`;
+      width: 100vw;
+      height: 100vh;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      white-space: pre-wrap;
+      overflow-y: scroll;
+      &::-webkit-scrollbar { width: 12px; }
+      &::-webkit-scrollbar-track { background: #2c2c2c; border-radius: 6px; } 
+      &::-webkit-scrollbar-thumb { background-color: #666; border-radius: 6px; border: 3px solid #2c2c2c; } 
+      &::-webkit-scrollbar-thumb:hover { background-color: #888; }
+      &::-webkit-scrollbar-thumb:active { background-color: #aaa; }
+      `;
 
-const CodeLine = styled('div')`
-  display: flex;
-  align-items: center;
-  padding-top: 0.5rem;
-  margin-top: 0.5rem;
-`;
-
-const LineNumber = styled('span')`
-  width: 30px;
-  margin-right: 8px;
-  color: #999;
-  user-select: none;
-`;
-
-const OutputText = styled('code')`
-  flex-grow: 1;
-  color: #666;
-`;
 
 export default CodeRunner;

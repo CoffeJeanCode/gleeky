@@ -77,10 +77,11 @@ const globals = [
   'parseInt',
   'undefined',
   'unescape',
+  "fetch"
 ];
 
 class Context {
-  constructor(public data: Record<string, any> = {}) {}
+  constructor(public data: Record<string, any> = {}) { }
 
   addProperty(name: string, value: any): void {
     this.data[name] = value;

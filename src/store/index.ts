@@ -1,31 +1,28 @@
 import { create } from 'zustand';
+import { persist } from "zustand/middleware"
+import { CodeType, OutputType } from '../types/code';
 
-type Store = {
-  code: string;
-  output: string[];
+interface Store {
+  code: CodeType;
+  output: OutputType[];
   error: Error | null;
   isLoading: boolean;
   setCode: (code: string) => void;
   setError: (error: Error | null) => void;
-  setOutput: (output: string[]) => void;
+  setOutput: (output: OutputType[]) => void;
   setIsLoading: (isLoading: boolean) => void;
-  updateOutputLine: (lineNumber: number, newOutput: string) => void;
 };
 
-export const useStore = create<Store>((set, get) => ({
-  code: '',
-  output: [],
-  error: null,
-  isLoading: false,
-  setCode: (code: string) => set({ code }),
-  setOutput: (output: string[]) => set({ output }),
-  setError: (error: Error | null) => set({ error }),
-  setIsLoading: (isLoading: boolean) => set({ isLoading }),
-  updateOutputLine: (lineNumber: number, newOutput: string) => {
-    set(() => {
-      const updatedOutput = [...get().output];
-      updatedOutput[lineNumber] = newOutput;
-      return { output: updatedOutput };
-    });
-  },
-}));
+export const useStore = create<Store>()(
+  persist((set) => ({
+    code: '',
+    output: [],
+    error: null,
+    isLoading: false,
+    setCode: (code: string) => set({ code }),
+    setOutput: (output: OutputType[]) => set({ output }),
+    setError: (error: Error | null) => set({ error }),
+    setIsLoading: (isLoading: boolean) => set({ isLoading }),
+  }), {
+    name: 'code-runner',
+  }));
