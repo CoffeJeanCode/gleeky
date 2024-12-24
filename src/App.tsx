@@ -1,18 +1,27 @@
 import { FC, useEffect } from 'react';
-import CodeEditor from './components/CodeEditor';
-import CodeRunner from './components/CodeRunner';
 import { styled } from 'goober';
 import Split from 'split.js';
+import CodeEditor from './components/CodeEditor';
+import CodeOutput from './components/CodeOutput';
 
 const App: FC = () => {
   useEffect(() => {
-    Split(['.editor', '.runner']);
+    Split(['.editor', '.runner'], { snapOffset: 10, gutterSize: 2 });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        const event = new Event('save');
+        document.dispatchEvent(event);
+      }
+    });
+
   }, []);
 
   return (
     <WrapperApp className="split">
       <CodeEditor />
-      <CodeRunner />
+      <CodeOutput />
     </WrapperApp>
   );
 };

@@ -77,7 +77,8 @@ const globals = [
   'parseInt',
   'undefined',
   'unescape',
-  "fetch"
+  "fetch",
+  "Promise",
 ];
 
 class Context {
