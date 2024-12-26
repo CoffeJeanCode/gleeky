@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { styled } from 'goober';
 import OutputLines from '../OutputLines';
-import { useCode } from '@/store/code';
+import { useCodeStore } from '@/store/code';
 import { Context, Script } from '@/libs/vm-browser';
 import { createConsoleProxy } from './utils/createConsoleProxy';
 
 
 const CodeOutput: React.FC = () => {
-  const { code, output, setOutput } = useCode();
+  const { code, output, setOutput } = useCodeStore();
 
   const executeCode = useMemo(() => {
     return () => {

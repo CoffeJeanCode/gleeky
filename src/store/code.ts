@@ -9,7 +9,7 @@ interface Store {
   setOutput: (output: Output) => void;
 };
 
-export const useCode = create<Store>()(
+export const useCodeStore = create<Store>()(
   persist((set) => ({
     code: '',
     output: [],
