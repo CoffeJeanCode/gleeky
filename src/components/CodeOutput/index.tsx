@@ -11,8 +11,7 @@ const CodeOutput: React.FC = () => {
 
   const executeCode = useMemo(() => {
     return () => {
-
-      const { logs, proxy } = createConsoleProxy();
+      const { output: logs, proxy } = createConsoleProxy();
       try {
 
         const executionContext = new Context();

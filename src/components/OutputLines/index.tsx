@@ -22,6 +22,9 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
   const type = data.type;
   const isExpandable = type === 'object' || type === 'array';
 
+  if (logType === 'table') {
+    return <OrangeText>{data.value}</OrangeText>;
+  }
 
   if (logType === 'error') {
     return <RedText>Error: {data.value}</RedText>;
@@ -81,7 +84,7 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
 
             return (
               <div key={key} style={{ display: 'flex', alignItems: 'start' }}>
-                <span style={{ color: 'rgb(238, 233, 48)', marginRight: '0.5rem' }}>{key}:</span>
+                <YellowText style={{ marginRight: '0.5rem' }}>{key}:</YellowText>
                 {value === null || value === undefined ? (
                   <Line
                     data={{ type: valueType, value: valueType }} // Mostramos 'null' o 'undefined'
@@ -145,6 +148,10 @@ const Text = styled("span")`
   font-weight: 600;
 `
 
+const YellowText = styled(Text)`
+  color: #eee930;
+`;
+
 const GrayText = styled(Text)`
   color: #6b7280;
 `;
@@ -163,6 +170,10 @@ const RedText = styled(Text)`
 
 const PurpleText = styled(Text)`
   color: #8b5cf6;
+`;
+
+const OrangeText = styled(Text)`
+  color: #f59e0b;
 `;
 
 const Chevron = styled<{ isExpanded: boolean }>("span")`
