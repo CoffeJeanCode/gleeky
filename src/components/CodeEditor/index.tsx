@@ -1,7 +1,7 @@
-import { useCode } from '@/store/code';
 import { Editor } from '@monaco-editor/react';
 import { FC } from 'react';
 import DarkPlus from "./dark-plus.json";
+import { useCodeStore } from '@/store/code';
 
 function setEditorTheme(monaco: any) {
   monaco.editor.defineTheme('onedark', {
@@ -9,10 +9,11 @@ function setEditorTheme(monaco: any) {
     inherit: true,
     ...DarkPlus
   });
+
 }
 
 const CodeEditor: FC = () => {
-  const { code, setCode } = useCode();
+  const { code, setCode } = useCodeStore();
 
   const handleCodeChange = (rawCode: string | undefined) => setCode(rawCode ?? "");
 
@@ -34,7 +35,7 @@ const CodeEditor: FC = () => {
           }
         }}
         value={code}
-        theme="onedark"
+        theme={"onedark"}
         beforeMount={setEditorTheme}
         onChange={handleCodeChange}
       />
