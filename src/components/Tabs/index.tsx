@@ -6,7 +6,7 @@ import Tab from "../Tab"
 
 const Tabs: React.FC = () => {
   const { code, setCode } = useCodeStore()
-  const { tabs, addTab } = useTabStore()
+  const { tabs, activeTabId, addTab } = useTabStore();
 
   const handleAddTab = () => {
     addTab();
@@ -17,12 +17,17 @@ const Tabs: React.FC = () => {
     const saveDocument = (e: KeyboardEvent) => {
       if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        const blob = new Blob([code], { type: "text/javascript" });
+        const currentTab = tabs.find(tab => tab.id === activeTabId)
+        const fileContent = currentTab?.content || code;
+
+        const blob = new Blob([fileContent], { type: "text/javascript" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
+
         a.href = url;
-        a.download = "document.js";
+        a.download = `${currentTab?.name}.js`;
         a.click();
+
         URL.revokeObjectURL(url);
       }
     }

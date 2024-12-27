@@ -10,12 +10,12 @@ export interface TabStore {
   addTab: () => void
   removeTab: (id: string) => void
   updateTabContent: (id: string, content: string) => void
-  updateTabTitle: (id: string, name: string) => void
+  updateTabName: (id: string, name: string) => void
 }
 
 
 export const useTabStore = create<TabStore>()(persist((set) => ({
-  tabs: [{ id: "1", name: 'untitled-1.js', content: '' }],
+  tabs: [{ id: "1", name: 'untitled-1', content: '' }],
   activeTabId: "1",
 
   setActiveTab: (id: string) => set({ activeTabId: id }),
@@ -26,7 +26,7 @@ export const useTabStore = create<TabStore>()(persist((set) => ({
       return {
         tabs: [...state.tabs, {
           id: newId,
-          name: `untitled-${newId}.js`,
+          name: `untitled-${newId}`,
           content: ''
         }],
         activeTabId: newId
@@ -52,7 +52,7 @@ export const useTabStore = create<TabStore>()(persist((set) => ({
       )
     })),
 
-  updateTabTitle: (id: string, name: string) =>
+  updateTabName: (id: string, name: string) =>
     set((state) => ({
       tabs: state.tabs.map(tab =>
         tab.id === id ? { ...tab, name } : tab
