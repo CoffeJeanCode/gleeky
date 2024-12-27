@@ -2,6 +2,7 @@ import { Editor } from '@monaco-editor/react';
 import { FC } from 'react';
 import DarkPlus from "./dark-plus.json";
 import { useCodeStore } from '@/store/code';
+import { useTabStore } from '@/store/tab';
 
 function setEditorTheme(monaco: any) {
   monaco.editor.defineTheme('onedark', {
@@ -14,8 +15,13 @@ function setEditorTheme(monaco: any) {
 
 const CodeEditor: FC = () => {
   const { code, setCode } = useCodeStore();
+  const { updateTabContent, activeTabId } = useTabStore();
 
-  const handleCodeChange = (rawCode: string | undefined) => setCode(rawCode ?? "");
+  const handleCodeChange = (rawCode: string | undefined) => {
+    const newCode = rawCode ?? ""
+    setCode(newCode)
+    updateTabContent(activeTabId, newCode)
+  };
 
   return (
     <div className="editor">

@@ -3,26 +3,21 @@ import { styled } from 'goober';
 import Split from 'split.js';
 import CodeEditor from './components/CodeEditor';
 import CodeOutput from './components/CodeOutput';
+import Tabs from './components/Tabs';
 
 const App: FC = () => {
   useEffect(() => {
     Split(['.editor', '.runner'], { snapOffset: 10, gutterSize: 2 });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        const event = new Event('save');
-        document.dispatchEvent(event);
-      }
-    });
-
   }, []);
 
   return (
-    <WrapperApp className="split">
-      <CodeEditor />
-      <CodeOutput />
-    </WrapperApp>
+    <>
+      <Tabs />
+      <WrapperApp className="split">
+        <CodeEditor />
+        <CodeOutput />
+      </WrapperApp>
+    </>
   );
 };
 
