@@ -6,9 +6,15 @@ interface OutputLinesProps {
   log: OutputLine;
 }
 const OutputLines: React.FC<OutputLinesProps> = ({ log }) => {
-  return log.data.map((data, index) => (
-    <Line key={index} data={data} logType={log.type} />
-  ))
+  return (
+    <>
+      {
+        log.data.map((data, index) => (
+          <Line key={index} data={data} logType={log.type} />
+        ))
+      }
+    </>
+  )
 };
 
 interface LineProps {

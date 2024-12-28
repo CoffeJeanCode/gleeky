@@ -1,3 +1,4 @@
+//@ts-nocheck
 const indexOf = <T>(xs: T[], item: T): number => {
   if (xs.indexOf) return xs.indexOf(item);
   else
@@ -77,9 +78,15 @@ const globals = [
   'parseInt',
   'undefined',
   'unescape',
-  "fetch",
-  "Promise",
+  'fetch',
+  'Promise',
 ];
+
+interface WindowWithEval extends Window {
+  eval?: (x: string) => any;
+  execScript?: (x: string) => void;
+  [key: string]: any;
+}
 
 class Context {
   constructor(public data: Record<string, any> = {}) { }
@@ -102,19 +109,23 @@ class Script {
     }
 
     const iframe = document.createElement('iframe');
-    if (!iframe.style) iframe.style = {};
-    iframe.style.display = 'none';
+    const iframeStyle = iframe.style as CSSStyleDeclaration;
+    iframeStyle.display = 'none';
 
     document.body.appendChild(iframe);
 
-    const win = iframe.contentWindow;
-    let wEval = win.eval,
-      wExecScript = win.execScript;
+    const win = iframe.contentWindow as WindowWithEval;
+    if (!win) throw new Error('Failed to get iframe window');
+
+    let wEval = win.eval;
+    let wExecScript = win.execScript;
 
     if (!wEval && wExecScript) {
       wExecScript.call(win, 'null');
       wEval = win.eval;
     }
+
+    if (!wEval) throw new Error('No eval function available');
 
     forEach(Object_keys(context.data), function (key) {
       win[key] = context.data[key];
@@ -130,8 +141,8 @@ class Script {
 
     const res = wEval.call(win, this.code);
 
-    forEach(Object_keys(win), function (key) {
-      if (key in context || indexOf(winKeys, key) === -1) {
+    forEach(Object_keys(win), function (key: string) {
+      if (key in context.data || indexOf(winKeys, key) === -1) {
         context.data[key] = win[key];
       }
     });
@@ -156,7 +167,7 @@ class Script {
     const res = this.runInContext(ctx);
 
     if (context) {
-      forEach(Object_keys(ctx), function (key) {
+      forEach(Object_keys(ctx.data), function (key) {
         context.data[key] = ctx.data[key];
       });
     }
@@ -168,7 +179,7 @@ class Script {
     const copy = new Context();
     if (context instanceof Context) {
       forEach(Object_keys(context.data), function (key) {
-        copy.addProperty(key, context.data);
+        copy.addProperty(key, context.data[key]);
       });
     }
     return copy;
