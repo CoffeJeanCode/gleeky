@@ -1,6 +1,5 @@
 import { Data, DataType, Output, OutputType } from "@/models/code";
 
-// Interface for console functions
 interface ConsoleProxy {
   log: (...args: any[]) => void;
   error: (...args: any[]) => void;
@@ -10,7 +9,6 @@ interface ConsoleProxy {
   timeEnd: (label: string) => void;
 }
 
-// Interface for proxy return
 interface ProxyReturn {
   proxy: ConsoleProxy;
   output: Output;
@@ -48,10 +46,8 @@ const formatValue = (value: any): Data => ({
 const createMarkdownTable = (data: any[]): string => {
   if (data.length === 0) return '';
 
-  // Obtener todos los encabezados únicos de los objetos
   const headers = Array.from(new Set(data.flatMap(obj => Object.keys(obj))));
 
-  // Obtener la longitud máxima de cada columna
   const columnWidths = headers.map(header => {
     return Math.max(
       header.length,
@@ -62,17 +58,13 @@ const createMarkdownTable = (data: any[]): string => {
     );
   });
 
-  // Formatear una fila según los anchos de columna
   const formatRow = (row: any[]) =>
     `| ${row.map((cell, i) => cell.padEnd(columnWidths[i], ' ')).join(' | ')} |`;
 
-  // Crear la fila de encabezado
   const headerRow = formatRow(headers);
 
-  // Crear la fila separadora
   const separatorRow = `| ${columnWidths.map(width => '-'.repeat(width)).join(' | ')} |`;
 
-  // Crear las filas de datos
   const dataRows = data.map(obj =>
     formatRow(
       headers.map(header => {
@@ -82,7 +74,6 @@ const createMarkdownTable = (data: any[]): string => {
     )
   );
 
-  // Combinar todas las filas
   return [headerRow, separatorRow, ...dataRows].join('\n');
 };
 

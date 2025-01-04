@@ -17,6 +17,7 @@ const Tabs: React.FC = () => {
     const saveDocument = (e: KeyboardEvent) => {
       if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
+
         const currentTab = tabs.find(tab => tab.id === activeTabId)
         const fileContent = currentTab?.content || code;
 
@@ -37,7 +38,7 @@ const Tabs: React.FC = () => {
     return () => {
       document.removeEventListener('keydown', saveDocument);
     }
-  }, [])
+  }, [activeTabId])
 
   return <TabsWrapper>
     {tabs.map((tab) => (

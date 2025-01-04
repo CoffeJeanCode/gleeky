@@ -13,7 +13,6 @@ const CodeOutput: React.FC = () => {
     return () => {
       const { output: logs, proxy } = createConsoleProxy();
       try {
-
         const executionContext = new Context();
         executionContext.addProperty("console", proxy);
 
@@ -27,11 +26,10 @@ const CodeOutput: React.FC = () => {
         const executionScript = new Script(`
           ${utilFunctions}
           ;(() => {
-          ${code} 
+            ${code} 
           // Runnig the code
           })();
           `);
-
 
         executionScript.runInContext(executionContext);
       } catch (err: any) {
@@ -62,9 +60,6 @@ const CodeOutput: React.FC = () => {
       {
         output.map((log, index) => (
           <LineWrapper key={index}>
-            <LineNumber>
-              {index + 1}
-            </LineNumber>
             <OutputLines log={log} />
           </LineWrapper>
         ))
@@ -80,17 +75,11 @@ const LineWrapper = styled("div")`
   margin-bottom: 5px;
 `;
 
-const LineNumber = styled("span")`
-  color: #9ca3af;
-  margin-right: 0.5rem;
-  font-weight: bold;
-  user-select: none;
-`;
 
 const WrapperCodeRunner = styled('section')`
   width: 100vw;
   height: 100vh;
-  padding: 1rem;
+  padding: 0 1rem 1rem 2rem;
   white-space: pre-wrap;
   background-color: #282c34;
   overflow-y: scroll;

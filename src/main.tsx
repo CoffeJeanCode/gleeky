@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App.tsx';
 import { setup } from 'goober';
+//@ts-ignore
 import { createGlobalStyles } from 'goober/global';
 
 setup(React.createElement);
