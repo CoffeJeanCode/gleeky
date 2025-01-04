@@ -3,6 +3,7 @@ import { FC } from 'react';
 import DarkPlus from "./dark-plus.json";
 import { useCodeStore } from '@/store/code';
 import { useTabStore } from '@/store/tab';
+import { editor } from 'monaco-editor';
 
 function setEditorTheme(monaco: any) {
   monaco.editor.defineTheme('onedark', {
@@ -10,6 +11,8 @@ function setEditorTheme(monaco: any) {
     inherit: true,
     ...DarkPlus
   });
+
+
 
 }
 
@@ -23,10 +26,17 @@ const CodeEditor: FC = () => {
     updateTabContent(activeTabId, newCode)
   };
 
+  const handleMount = (editor: editor.IStandaloneCodeEditor) => {
+    editor.focus();
+    editor.getAction('editor.action.formatDocument')?.run()
+  }
+
   return (
     <div className="editor">
       <Editor
         language="javascript"
+        value={code}
+        theme={"onedark"}
         options={{
           minimap: { enabled: false },
           lineNumbers: 'on',
@@ -40,10 +50,9 @@ const CodeEditor: FC = () => {
             enabled: true
           }
         }}
-        value={code}
-        theme={"onedark"}
         beforeMount={setEditorTheme}
         onChange={handleCodeChange}
+        onMount={handleMount}
       />
     </div>
   );
