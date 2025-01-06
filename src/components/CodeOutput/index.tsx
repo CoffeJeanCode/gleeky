@@ -4,32 +4,34 @@ import OutputLines from '../OutputLines';
 import { useCodeStore } from '@/store/code';
 import { Context, Script } from '@/libs/vm-browser';
 import { createConsoleProxy } from './utils/createConsoleProxy';
+import { extractModuleNames, preloadModule } from './utils/createModuleProxy';
+import { createUtilFunctions } from './utils/createUtilFunctions';
 
 
 const CodeOutput: React.FC = () => {
   const { code, output, setOutput } = useCodeStore();
 
   const executeCode = useMemo(() => {
-    return () => {
+    return async () => {
       const { output: logs, proxy } = createConsoleProxy();
+      const moduleCache = new Map<string, string>();
+      const executionContext = new Context();
+
+      executionContext.addProperty('console', proxy);
+      executionContext.addProperty('moduleCache', moduleCache);
+
       try {
-        const executionContext = new Context();
-        executionContext.addProperty("console", proxy);
+        const moduleNames = extractModuleNames(code);
 
-        const utilFunctions = `
-        function log(...x) {
-          console.log(...x);
-          return [...x];
-          };
-          `
+        await Promise.all(moduleNames.map(name => preloadModule(name, moduleCache)));
 
-        const executionScript = new Script(`
-          ${utilFunctions}
-          ;(() => {
-            ${code} 
-          // Runnig the code
-          })();
-          `);
+        const userCodeWrapper = `
+          globalThis.process = { env: { NODE_ENV: 'production' } };
+          ${createUtilFunctions()}
+          ${code}
+        `;
+
+        const executionScript = new Script(userCodeWrapper);
 
         executionScript.runInContext(executionContext);
       } catch (err: any) {
@@ -78,7 +80,7 @@ const LineWrapper = styled("div")`
 
 const WrapperCodeRunner = styled('section')`
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 35px);
   padding: 0 1rem 1rem 2rem;
   white-space: pre-wrap;
   background-color: #282c34;
