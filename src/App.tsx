@@ -4,6 +4,7 @@ import Split from 'split.js';
 import CodeEditor from './components/CodeEditor';
 import CodeOutput from './components/CodeOutput';
 import Tabs from './components/Tabs';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const App: FC = () => {
   useEffect(() => {
@@ -11,15 +12,23 @@ const App: FC = () => {
   }, []);
 
   return (
-    <>
-      <Tabs />
+    <ErrorBoundary>
+      <Header>
+        <Tabs />
+      </Header>
       <WrapperApp className="split">
         <CodeEditor />
         <CodeOutput />
       </WrapperApp>
-    </>
+    </ErrorBoundary>
   );
 };
+
+const Header = styled('header')`
+  background: #282c34;
+  display: flex;
+  align-items: center;
+`;
 
 const WrapperApp = styled('main')`
   min-height: 100vh;
