@@ -79,13 +79,13 @@ const LineWrapper = styled("div")`
   margin-bottom: 5px;
 `;
 
-
 const WrapperCodeRunner = styled('section')`
   width: 100vw;
   height: calc(100vh - 35px);
   padding: 0 1rem 1rem 2rem;
   white-space: pre-wrap;
-  background-color: #282c34;
+  font-family: var(--font-family);
+  background-color: var(--bg);
   overflow-y: scroll;
   &::-webkit-scrollbar { width: 14px;}
   &::-webkit-scrollbar-track { background: transparent; width: 14px; border-left: 1px solid #404349; } 

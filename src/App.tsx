@@ -25,7 +25,7 @@ const App: FC = () => {
 };
 
 const Header = styled('header')`
-  background: #282c34;
+  background: var(--bg);
   display: flex;
   align-items: center;
 `;
@@ -34,10 +34,10 @@ const WrapperApp = styled('main')`
   min-height: 100vh;
   display: flex;
   flex-direction: row;
-  background: rgb(30, 30, 30);
-  color: white;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 18px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-family);
+  font-size: var(--font-size);
   overflow: hidden;
 `;
 

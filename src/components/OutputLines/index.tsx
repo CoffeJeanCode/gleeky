@@ -29,11 +29,11 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
   const isExpandable = type === 'object' || type === 'array';
 
   if (logType === 'table') {
-    return <OrangeText>{data.value}</OrangeText>;
+    return <span style={{ color: "var(--token-table)" }}>{data.value}</span>;
   }
 
   if (logType === 'error') {
-    return <RedText>Error: {data.value}</RedText>;
+    return <span style={{ color: "var(--token-error)" }}>{data.value}</span>;
   }
 
   if (!isExpandable) {
@@ -49,11 +49,11 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
     <div>
       <ExpandableWrapper onClick={() => setIsExpanded(!isExpanded)}>
         <Chevron isExpanded={isExpanded}>{"→"}</Chevron>
-        <GrayText>{prefix[0]}</GrayText>
+        <span style={{ color: "var(--token-keyword)" }}>{prefix[0]}</span>
         {!isExpanded && (
-          <GrayText>
+          <span style={{ color: "var(--token-punctuation)" }}>
             {isArray ? `Array(${items.length})` : `Object`}
-          </GrayText>
+          </span>
         )}
       </ExpandableWrapper>
 
@@ -65,7 +65,7 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
 
               return (
                 <div key={index} style={{ display: 'flex', alignItems: 'start' }}>
-                  <GrayText style={{ marginRight: '0.5rem' }}>{index}:</GrayText>
+                  <span style={{ marginRight: '0.5rem', color: "var(--token-punctuation)" }}>{index}:</span>
                   {item === null || item === undefined ? (
                     <Line
                       data={{ type: itemType, value: itemType }}
@@ -90,7 +90,7 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
 
             return (
               <div key={key} style={{ display: 'flex', alignItems: 'start' }}>
-                <YellowText style={{ marginRight: '0.5rem' }}>{key}:</YellowText>
+                <span style={{ color: "var(--token-punctuation)", marginRight: '0.5rem' }}>{key}:</span>
                 {value === null || value === undefined ? (
                   <Line
                     data={{ type: valueType, value: valueType }} // Mostramos 'null' o 'undefined'
@@ -112,7 +112,7 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
           })}
         </ExpandableContent>
       )}
-      {isExpanded && <GrayText>{prefix[1]}</GrayText>}
+      {isExpanded && <span style={{ color: "var(--token-keyword)" }}>{prefix[1]}</span>}
     </div>
   );
 };
@@ -120,20 +120,19 @@ const Line: React.FC<LineProps> = ({ data, logType, depth = 0 }) => {
 const renderSimpleValue = (type: DataType, data: Data) => {
   switch (type) {
     case 'undefined':
-      return <GrayText>undefined</GrayText>;
+      return <span style={{ color: "var(--token-null)" }}>undefined</span>;
     case 'null':
-      return <GrayText>null</GrayText>;
+      return <span style={{ color: "var(--token-null)" }}>null</span>;
     case 'number':
-      return <BlueText>{data.value}</BlueText>;
+      return <span style={{ color: "var(--token-number)" }}>{data.value}</span>;
     case 'string':
-      return <GreenText>"{data.value}"</GreenText>;
+      return <span style={{ color: "var(--token-string)" }}>"{data.value}"</span>;
     case 'boolean':
-      return <PurpleText>{data.value}</PurpleText>;
+      return <span style={{ color: "var(--token-boolean)" }}>{data.value}</span>;
     default:
       return <span>{data.value}</span>;
   }
 };
-
 
 const ExpandableWrapper = styled("div")`
   min-width: 6rem;
@@ -141,45 +140,12 @@ const ExpandableWrapper = styled("div")`
   display: flex;
   align-items: center;
   &:hover {
-    background-color:rgb(49, 49, 49);
+    background-color: var(--hover);
   }
 `;
 
 const ExpandableContent = styled("div")`
   margin-left: 1rem;
-`;
-
-const Text = styled("span")`
-  display: inline-block;
-  font-weight: 600;
-`
-
-const YellowText = styled(Text)`
-  color: #eee930;
-`;
-
-const GrayText = styled(Text)`
-  color: #6b7280;
-`;
-
-const BlueText = styled(Text)`
-  color:rgb(121, 172, 253);
-`;
-
-const GreenText = styled(Text)`
-  color: #10b981;
-`;
-
-const RedText = styled(Text)`
-  color:rgb(185, 16, 16);
-`;
-
-const PurpleText = styled(Text)`
-  color: #8b5cf6;
-`;
-
-const OrangeText = styled(Text)`
-  color: #f59e0b;
 `;
 
 const Chevron = styled<{ isExpanded: boolean }>("span")`

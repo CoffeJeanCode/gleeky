@@ -113,7 +113,7 @@ const TabWrapper = styled("div") <{ isActive: boolean }>`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
-  background: #282c34;
+  background: var(--bg);
   border-right: 1px solid #252525;
   min-width: 150px;
   max-width: 220px;
@@ -124,7 +124,7 @@ const TabWrapper = styled("div") <{ isActive: boolean }>`
   gap: 0.5rem;
 
   &:hover {
-    background:rgb(23, 27, 36);
+    background: var(--hover);
   }
 
   &::after {
@@ -134,7 +134,7 @@ const TabWrapper = styled("div") <{ isActive: boolean }>`
     left: 0;
     right: 0;
     height: 2px;
-    background: ${({ isActive }) => isActive ? '#007acc' : 'transparent'};
+    background: ${({ isActive }) => isActive ? 'var(--accent)' : 'transparent'};
   }
 `
 
@@ -142,20 +142,19 @@ const TabInput = styled("input")`
   background: #3c3c3c;
   border: none;
   outline: none;
-  color: #fff;
+  color: var(--text);
   font-size: 0.8125rem;
   padding: 0.2rem 0.4rem;
-  border-radius: 3px;
   width: 100%;
   flex: 1;
 
   &:focus {
-    border: 1px solid #007acc;
+    border: 1px solid var(--accent);
   }
 `
 
 const TabTitle = styled("span") <{ isActive: boolean }>`
-  color: ${({ isActive }) => isActive ? '#fff' : '#909090'};
+  color: ${({ isActive }) => isActive ? '#fff' : 'var(--text)'};
   font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
@@ -166,7 +165,7 @@ const TabTitle = styled("span") <{ isActive: boolean }>`
 const CloseButton = styled("button")`
   background: transparent;
   border: none;
-  color: #808080;
+  color: var(--text);
   padding: 2px 5px;
   display: flex;
   align-items: center;

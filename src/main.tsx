@@ -4,10 +4,13 @@ import App from '@/App.tsx';
 import { setup } from 'goober';
 //@ts-ignore
 import { createGlobalStyles } from 'goober/global';
+import { theme } from './styles/theme';
 
 setup(React.createElement);
 
 const GlobalStyles = createGlobalStyles`
+  ${theme}
+  
   html,
   body {
     margin: 0;
@@ -24,15 +27,11 @@ const GlobalStyles = createGlobalStyles`
 }
 
   .gutter {
-      background-color:rgb(40, 194, 255);
+      background-color:var(--accent);
       background-repeat: no-repeat;
       background-position: 50%;
   }
 
-  .gutter.gutter-horizontal {
-      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
-      cursor: col-resize;
-  }
 `;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

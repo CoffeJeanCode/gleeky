@@ -53,7 +53,7 @@ const Tabs: React.FC = () => {
 const AddButton = styled("button")`
   background: transparent;
   border: none;
-  color: #808080;
+  color: var(--text);
   padding: 0 .6rem;
   display: flex;
   align-items: center;

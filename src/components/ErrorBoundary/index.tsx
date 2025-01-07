@@ -44,7 +44,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 }
 
 export const ErrorBoundaryWrapper = styled("div")`
-  background-color: #1e1e1e; 
+  background-color: var(--bg); 
   color: white;
   display: flex;
   flex-direction: column;
@@ -55,7 +55,7 @@ export const ErrorBoundaryWrapper = styled("div")`
 `;
 
 export const ResetButton = styled("button")`
-  background-color: #007acc; /* Azul oscuro */
+  background-color: var(--accent);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -65,6 +65,6 @@ export const ResetButton = styled("button")`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #005f9e; /* Azul más oscuro al pasar el cursor */
+    background-color: var(--accent-dark); 
   }
 `;

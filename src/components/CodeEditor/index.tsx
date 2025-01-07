@@ -37,6 +37,8 @@ const CodeEditor: FC = () => {
         options={{
           minimap: { enabled: false },
           lineNumbers: 'on',
+          fontFamily: "var(--font-family)",
+          fontLigatures: true,
           fontSize: 18,
           tabSize: 2,
           padding: { top: 16, bottom: 16 },
