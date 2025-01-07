@@ -40,21 +40,16 @@ const Tabs: React.FC = () => {
     }
   }, [activeTabId])
 
-  return <TabsWrapper>
+  return <>
     {tabs.map((tab) => (
       <Tab key={tab.id} tab={tab} />
     )
     )}
     <AddButton onClick={handleAddTab}>+</AddButton>
-  </TabsWrapper>
+  </>
 }
 
 
-const TabsWrapper = styled("section")`
-  background: #282c34;
-  display: flex;
-  align-items: center;
-`
 const AddButton = styled("button")`
   background: transparent;
   border: none;
