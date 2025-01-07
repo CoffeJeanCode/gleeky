@@ -28,7 +28,7 @@ const safeStringify = (value: any): string => {
 
     if (typeof value === 'object') {
       const seen = new WeakSet();
-      return JSON.stringify(value, (key, val) => {
+      return JSON.stringify(value, (_, val) => {
         if (typeof val === 'object' && val !== null) {
           if (seen.has(val)) return '[Circular]';
           seen.add(val);
