@@ -17,14 +17,30 @@ interface ProxyReturn {
 
 const safeStringify = (value: any): string => {
   try {
+    if (value === undefined) return 'undefined';
+    if (value === null) return 'null';
     if (typeof value === 'string') return value;
     if (typeof value === 'number') return value.toString();
     if (typeof value === 'boolean') return value.toString();
-    if (value === null) return 'null';
-    if (value === undefined) return 'undefined';
     if (typeof value === 'function') return value.toString();
     if (typeof value === 'symbol') return value.toString();
     if (typeof value === 'bigint') return value.toString();
+
+    if (typeof value === 'object') {
+      const seen = new WeakSet();
+      return JSON.stringify(value, (key, val) => {
+        if (typeof val === 'object' && val !== null) {
+          if (seen.has(val)) return '[Circular]';
+          seen.add(val);
+        }
+        try {
+          return val;
+        } catch {
+          return '[Complex Value]';
+        }
+      }, 2);
+    }
+
     return JSON.stringify(value);
   } catch (error) {
     return '[Unable to stringify value]';
@@ -33,9 +49,9 @@ const safeStringify = (value: any): string => {
 
 const getType = (value: any): DataType => {
   if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
   if (Array.isArray(value)) return 'array';
-  return typeof value as DataType;
+  if (value instanceof Error) return 'error';
+  return typeof value;
 };
 
 const formatValue = (value: any): Data => ({

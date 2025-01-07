@@ -17,8 +17,10 @@ const CodeOutput: React.FC = () => {
       const moduleCache = new Map<string, string>();
       const executionContext = new Context();
 
+
       executionContext.addProperty('console', proxy);
       executionContext.addProperty('moduleCache', moduleCache);
+
 
       try {
         const moduleNames = extractModuleNames(code);

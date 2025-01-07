@@ -11,9 +11,6 @@ function setEditorTheme(monaco: any) {
     inherit: true,
     ...DarkPlus
   });
-
-
-
 }
 
 const CodeEditor: FC = () => {

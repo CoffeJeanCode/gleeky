@@ -5,7 +5,7 @@ export const createUtilFunctions = () => `
   }
 
   const loadedModules = {};
-        
+       
   function require(moduleName, version = 'latest') {
     const url = \`https://unpkg.com/\${moduleName}\${version === 'latest' ? '' : '@' + version}\`;
     
