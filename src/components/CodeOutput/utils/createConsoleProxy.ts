@@ -22,17 +22,90 @@ const safeStringify = (value: any): string => {
     if (typeof value === 'string') return value;
     if (typeof value === 'number') return value.toString();
     if (typeof value === 'boolean') return value.toString();
-    if (typeof value === 'function') return value.toString();
+    if (typeof value === 'function') return `[Function: ${value.name || 'anonymous'}]`;
     if (typeof value === 'symbol') return value.toString();
-    if (typeof value === 'bigint') return value.toString();
-
+    if (typeof value === 'bigint') return `${value.toString()}n`;
     if (typeof value === 'object') {
       const seen = new WeakSet();
+
+      // Handle special cases
+      if (value instanceof Date) return value.toISOString();
+      if (value instanceof RegExp) return value.toString();
+      if (value instanceof Error) {
+        return JSON.stringify({
+          name: value.name,
+          message: value.message,
+          stack: value.stack
+        }, null, 2);
+      }
+
+      // Check if the value is an instance of a class
+      if (value.constructor && value.constructor.name !== 'Object') {
+        const className = value.constructor.name;
+        // Get all properties including non-enumerable ones and symbols
+        const properties = [
+          ...Object.getOwnPropertyNames(value),
+          ...Object.getOwnPropertySymbols(value).map(sym => sym.toString())
+        ];
+
+        // Create object representation with property descriptors
+        const objRepresentation = properties.reduce((acc, prop) => {
+          const descriptor = Object.getOwnPropertyDescriptor(value, prop);
+          if (descriptor) {
+            // Handle getters and setters
+            if (descriptor.get || descriptor.set) {
+              acc[prop] = {
+                get: descriptor.get ? '[Getter]' : undefined,
+                set: descriptor.set ? '[Setter]' : undefined
+              };
+            } else {
+              acc[prop] = value[prop];
+            }
+          }
+          return acc;
+        }, {} as Record<string, any>);
+
+        return JSON.stringify({
+          [`[${className}]`]: objRepresentation
+        }, (_, val) => {
+          if (typeof val === 'object' && val !== null) {
+            if (seen.has(val)) return '[Circular]';
+            seen.add(val);
+
+            // Handle nested class instances
+            if (val.constructor && val.constructor.name !== 'Object') {
+              const nestedClassName = val.constructor.name;
+              const nestedProps = Object.getOwnPropertyNames(val).reduce((acc, prop) => {
+                acc[prop] = val[prop];
+                return acc;
+              }, {} as Record<string, any>);
+              return { [`[${nestedClassName}]`]: nestedProps };
+            }
+          }
+
+          if (typeof val === 'function') return `[Function: ${val.name || 'anonymous'}]`;
+          if (val instanceof Date) return val.toISOString();
+          if (val instanceof RegExp) return val.toString();
+
+          try {
+            return val;
+          } catch {
+            return '[Complex Value]';
+          }
+        }, 2);
+      }
+
+      // Handle regular objects
       return JSON.stringify(value, (_, val) => {
         if (typeof val === 'object' && val !== null) {
           if (seen.has(val)) return '[Circular]';
           seen.add(val);
         }
+
+        if (typeof val === 'function') return `[Function: ${val.name || 'anonymous'}]`;
+        if (val instanceof Date) return val.toISOString();
+        if (val instanceof RegExp) return val.toString();
+
         try {
           return val;
         } catch {
@@ -40,7 +113,6 @@ const safeStringify = (value: any): string => {
         }
       }, 2);
     }
-
     return JSON.stringify(value);
   } catch (error) {
     return '[Unable to stringify value]';
@@ -99,9 +171,11 @@ export const createConsoleProxy = (): ProxyReturn => {
   const timers: Record<string, number> = {};
 
   const logEntry = (type: OutputType) => (...args: any[]) => {
-    output.push({
-      type,
-      data: args.map(formatValue)
+    args.forEach((arg) => {
+      output.push({
+        type,
+        data: [formatValue(arg)]
+      });
     });
   };
 
