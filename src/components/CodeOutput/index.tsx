@@ -6,7 +6,7 @@ import { Context, Script } from '@/libs/vm-browser';
 import { createConsoleProxy } from './utils/createConsoleProxy';
 import { extractModuleNames, preloadModule } from './utils/createModuleProxy';
 import { createUtilFunctions } from './utils/createUtilFunctions';
-
+import { addAutoLog } from './utils/addLogInput';
 
 const CodeOutput: React.FC = () => {
   const { code, output, setOutput } = useCodeStore();
@@ -16,21 +16,20 @@ const CodeOutput: React.FC = () => {
       const { output: logs, proxy } = createConsoleProxy();
       const moduleCache = new Map<string, string>();
       const executionContext = new Context();
-
+      const normalizedCode = addAutoLog(code);
 
       executionContext.addProperty('console', proxy);
       executionContext.addProperty('moduleCache', moduleCache);
 
-
       try {
-        const moduleNames = extractModuleNames(code);
+        const moduleNames = extractModuleNames(normalizedCode);
 
         await Promise.all(moduleNames.map(name => preloadModule(name, moduleCache)));
 
         const userCodeWrapper = `
           globalThis.process = { env: { NODE_ENV: 'production' } };
           ${createUtilFunctions()}
-          ${code}
+          ${normalizedCode}
         `;
 
         const executionScript = new Script(userCodeWrapper);
