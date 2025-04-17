@@ -35,7 +35,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
           Something went wrong
           Please reset app
         </h1>
-        <ResetButton onClick={this.handleClick}>Reset App</ResetButton>
+        <ResetButton onClick={this.handleClick}>Reset app</ResetButton>
       </ErrorBoundaryWrapper>
     }
 
@@ -44,18 +44,19 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 }
 
 export const ErrorBoundaryWrapper = styled("div")`
-  background-color: var(--bg); 
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
+background-color: var(--bg); 
+color: white;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100vh;
+text-align: center;
+font-family: Seogo UI, sans-serif;
 `;
 
 export const ResetButton = styled("button")`
-  background-color: var(--accent);
+background-color: var(--accent);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
