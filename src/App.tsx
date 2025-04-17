@@ -8,7 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 const App: FC = () => {
   useEffect(() => {
-    Split(['.editor', '.runner'], { snapOffset: 10, gutterSize: 2 });
+    Split(['.editor', '.runner'], { snapOffset: 10, gutterSize: 4 });
   }, []);
 
   return (
